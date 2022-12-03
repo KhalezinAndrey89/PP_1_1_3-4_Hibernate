@@ -1,24 +1,31 @@
 package jm.task.core.jdbc.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 public class Util {
-    // реализуйте настройку соеденения с БД
     private static final String url = "jdbc:mysql://localhost:3306/resource_db";
     private static final String userName = "root";
     private static final String password = "030589Ah";
+    private static final String driver = "com.mysql.cj.jdbc.Driver";
+    private static final String dialect = "org.hibernate.dialect.MySQLDialect";
+    private static SessionFactory sessionFactory;
 
-    public static Connection getConnection() {
-        Connection connection = null;
-
+    public static SessionFactory getSessionFactory() {
         try {
-            connection = DriverManager.getConnection(url, userName, password);
-        } catch (SQLException e) {
+            Configuration configuration = new Configuration()
+                    .setProperty("hibernate.connection.url", url)
+                    .setProperty("hibernate.connection.username", userName)
+                    .setProperty("hibernate.connection.password", password)
+                    .setProperty("hibernate.connection.driver_class", driver)
+                    .setProperty("hibernate.connection.dialect", dialect)
+                    .addAnnotatedClass(User.class);
+
+            sessionFactory = configuration.buildSessionFactory();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return connection;
+        return sessionFactory;
     }
 }
